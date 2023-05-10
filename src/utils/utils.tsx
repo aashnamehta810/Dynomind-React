@@ -7,7 +7,7 @@ import { ReactComponent as BTCIcon } from '@app/assets/icons/btc.svg';
 import visa from '@app/assets/images/card-issuers/visa.png';
 import mastercard from '@app/assets/images/card-issuers/mastercard.png';
 import maestro from '@app/assets/images/card-issuers/maestro.png';
-import { ANY_OBJECT, CurrencyTypeEnum, PermissionData } from '@app/interfaces/interfaces';
+import { ANY_OBJECT, CurrencyTypeEnum, PermissionData, RoutePermissionData } from '@app/interfaces/interfaces';
 import { httpStatusCodes } from '@app/constants/httpStatusCode';
 import { deleteToken } from '@app/services/localStorage.service';
 import { NavigateFunction } from 'react-router-dom';
@@ -269,6 +269,17 @@ export const getDefaultTranslationRow = (): Translation => ({
 export const getAccessCode = (obj: PermissionData, value: string): number => {
   const checkAccess = Object.keys(obj).find((key) => key === value);
   return (checkAccess && obj[checkAccess]) || 0;
+};
+
+export const getRoutePermissionAccessCode = (obj: PermissionData, routeObj: RoutePermissionData, pathname: string): number => {
+  const matchedValue = Object.values(routeObj).find(value => value === pathname);
+  if (matchedValue) {
+    const matchedKey = Object.keys(obj).find(key => routeObj[key] === matchedValue);
+    if (matchedKey) {
+      return obj[matchedKey];
+    }
+  }
+  return 0;
 };
 
 export const removeSpaceAndRepalce = (string: string, replaceWith: string): string => {

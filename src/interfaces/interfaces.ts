@@ -73,6 +73,10 @@ export interface PermissionData {
   [propKey: string]: number;
 }
 
+export interface RoutePermissionData {
+  [propKey: string]: string;
+}
+
 export interface ANY_OBJECT {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
