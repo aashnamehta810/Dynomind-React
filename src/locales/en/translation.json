@@ -251,7 +251,11 @@
     "languages": "Languages",
     "users": "Users",
     "addUser": "Add User",
-    "addRole": "Add Role"
+    "addRole": "Add Role",
+    "project": "Project",
+    "projects": "Projects",
+    "createProject": "Create Project",
+    "addProject": "Add Project"
   },
   "medical-dashboard": {
     "activity": {
@@ -948,5 +952,12 @@
     "languageBasicDetails": "Language Basic Details",
     "languageSuccessMessage": "Language created!",
     "languageSuccessDescription": "Language created successfully"
+  },
+  "project": {
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "projectSuccessMessage": "Project Success",
+    "projectSuccessDescription": "Project created successfully"
   }
 }

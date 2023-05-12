@@ -9,7 +9,7 @@ import { EditableCell } from '../editableTable/EditableCell';
 import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
 import { flatMap, get, isObject, lowerCase, set } from 'lodash';
 import { ANY_OBJECT } from '@app/interfaces/interfaces';
-import { capitalize, checkHTTPStatus, getDefaultTranslationRow, getRoutePermissionAccessCode, sortAscendingDecending } from '@app/utils/utils';
+import { capitalize, checkHTTPStatus, getDefaultTranslationRow, sortAscendingDecending } from '@app/utils/utils';
 import { Translation } from '@app/api/translation.api';
 import {
   TranslationState,
@@ -18,21 +18,17 @@ import {
   addNewLanguage,
 } from '@app/store/slices/translationsSlice';
 import { notificationController } from '@app/controllers/notificationController';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as S from './TranslationTable.styles';
 import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch.styles';
 import { FilterIcon } from 'components/common/icons/FilterIcon';
 import { AddLanguageModal } from '@app/components/common/Modal/AddLanguage/AddLanguageModal';
 import { useDialog } from '@app/hooks/useDialog';
 import { useLoader } from '@app/hooks/useLoader';
-import { PermissionTypes, RoutesMapping } from '@app/constants/enums/permission';
 
 export const TranslationTable: React.FC = () => {
   const [form] = Form.useForm();
   const translation = useAppSelector((state) => state.translation);
-  const location = useLocation();
-  const [permission, setPermission] = useState(0);
-  const userPermission = useAppSelector((state) => state.user.user?.role.permissions);
   const [initialPagination, setInitialPagination] = useState<Pagination>({
     current: 1,
     pageSize: 10,
@@ -178,20 +174,6 @@ export const TranslationTable: React.FC = () => {
       },
     },
   ];
-
-  useEffect(() => {
-    if (userPermission) {
-      const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
-      setPermission(checkPermission);
-    }
-  },[location.pathname, userPermission])
-
-  if(permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex(column => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove,1);
-    }
-  }
 
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {

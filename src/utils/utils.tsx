@@ -7,7 +7,7 @@ import { ReactComponent as BTCIcon } from '@app/assets/icons/btc.svg';
 import visa from '@app/assets/images/card-issuers/visa.png';
 import mastercard from '@app/assets/images/card-issuers/mastercard.png';
 import maestro from '@app/assets/images/card-issuers/maestro.png';
-import { ANY_OBJECT, CurrencyTypeEnum, PermissionData, RoutePermissionData } from '@app/interfaces/interfaces';
+import { ANY_OBJECT, CurrencyTypeEnum, PermissionData } from '@app/interfaces/interfaces';
 import { httpStatusCodes } from '@app/constants/httpStatusCode';
 import { deleteToken } from '@app/services/localStorage.service';
 import { NavigateFunction } from 'react-router-dom';
@@ -271,17 +271,6 @@ export const getAccessCode = (obj: PermissionData, value: string): number => {
   return (checkAccess && obj[checkAccess]) || 0;
 };
 
-export const getRoutePermissionAccessCode = (obj: PermissionData, routeObj: RoutePermissionData, pathname: string): number => {
-  const matchedValue = Object.values(routeObj).find(value => value === pathname);
-  if (matchedValue) {
-    const matchedKey = Object.keys(obj).find(key => routeObj[key] === matchedValue);
-    if (matchedKey) {
-      return obj[matchedKey];
-    }
-  }
-  return 0;
-};
-
 export const removeSpaceAndRepalce = (string: string, replaceWith: string): string => {
   return string.replaceAll(/\s/g, replaceWith).toLocaleLowerCase();
 };
@@ -296,33 +285,7 @@ export const getSchema = (val: ANY_OBJECT, keys: unknown[] = []): string | unkno
 
 export const randomString = (length: number): string => {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~`|}{[]:;?><,./-=';
-  const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
-  const number = '0123456789';
-  const specialChar = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
   let result = '';
-  let upperCaseCount = 0;
-  let lowerCaseCount = 0;
-  let numberCount = 0;
-  let specialCharCount = 0;
-  for (let i = length; i > 0; --i) {
-    const random = Math.floor(Math.random() * chars.length);
-    result += chars[random];
-    if (upperCase.includes(chars[random])) {
-      upperCaseCount++;
-    }
-    if (lowerCase.includes(chars[random])) {
-      lowerCaseCount++;
-    }
-    if (number.includes(chars[random])) {
-      numberCount++;
-    }
-    if (specialChar.includes(chars[random])) {
-      specialCharCount++;
-    }
-  }
-  if (upperCaseCount === 0 || lowerCaseCount === 0 || numberCount === 0 || specialCharCount === 0) {
-    return randomString(length);
-  }
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 };

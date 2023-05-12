@@ -6,6 +6,7 @@ import {
   PlusSquareOutlined,
   UserSwitchOutlined,
   UsergroupAddOutlined,
+  ProjectOutlined,
 } from '@ant-design/icons';
 export interface SidebarNavigationItem {
   title: string;
@@ -14,6 +15,7 @@ export interface SidebarNavigationItem {
   children?: SidebarNavigationItem[];
   icon?: React.ReactNode;
   isOnlyAdmin: boolean;
+  isModel?: boolean;
 }
 
 export const sidebarNavigation: SidebarNavigationItem[] = [
@@ -24,6 +26,13 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
     url: '/',
     icon: <DashboardOutlined />,
     isOnlyAdmin: false,
+  },
+  {
+    title: 'common.kanban',
+    key: 'kanban',
+    url: '/kanban',
+    icon: <ProjectOutlined />,
+    isOnlyAdmin: true,
   },
   {
     title: 'common.apps',
@@ -58,6 +67,20 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
         url: '/roles',
         icon: <UserSwitchOutlined />,
         isOnlyAdmin: true,
+      },
+    ],
+  },
+  {
+    title: 'common.projects',
+    key: 'projects',
+    icon: <PlusSquareOutlined />,
+    isOnlyAdmin: true,
+    children: [
+      {
+        title: 'common.createProject',
+        key: 'create-project',
+        isOnlyAdmin: true,
+        isModel: true,
       },
     ],
   },

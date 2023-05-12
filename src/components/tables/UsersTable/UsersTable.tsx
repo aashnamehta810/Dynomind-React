@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { UserTableRow, QueryTable } from 'api/table.api';
-import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
+import { useAppDispatch } from '@app/hooks/reduxHooks';
 import { doCreateClient, doUpdateUser, fetchUserList } from '@app/store/slices/userSlice';
 import { notificationController } from '@app/controllers/notificationController';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { checkHTTPStatus, capitalize, randomString } from '@app/utils/utils';
 import { useTranslation } from 'react-i18next';
 import { Table } from 'components/common/Table/Table';
@@ -23,8 +23,6 @@ import { getRoleList } from '@app/store/slices/roleSlice';
 import { Role } from '@app/api/role.api';
 import { userColumns } from './Column';
 import { LoginTypes } from '@app/constants/enums/loginType';
-import { getRoutePermissionAccessCode } from '@app/utils/utils';
-import { PermissionTypes, RoutesMapping } from '@app/constants/enums/permission';
 
 export const UsersTable: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -32,9 +30,6 @@ export const UsersTable: React.FC = () => {
   const { t } = useTranslation();
   const [roleList, setRoleList] = useState<Role[]>([]);
   const loginType = process.env.REACT_APP_LOGIN_TYPE;
-  const location = useLocation();
-  const [permission, setPermission] = useState(0);
-  const userPermission = useAppSelector((state) => state.user.user?.role.permissions);
 
   const [initialPagination, setInitialPagination] = useState<QueryTable>({
     page: 1,
@@ -162,20 +157,6 @@ export const UsersTable: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    if (userPermission) {
-      const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
-      setPermission(checkPermission);
-    }
-  },[location.pathname, userPermission])
-
-  if(permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex(column => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove,1);
-    }
-  }
-  
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;

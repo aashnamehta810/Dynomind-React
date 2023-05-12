@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ConfigProvider } from 'antd';
 import { HelmetProvider } from 'react-helmet-async';
 import GlobalStyle from './styles/GlobalStyle';
@@ -18,6 +18,7 @@ import i18next from 'i18next';
 import { fetchUser } from './store/slices/userSlice';
 import { usePusher } from './hooks/usePusher';
 import { readToken } from './services/localStorage.service';
+import { getProjectList } from './store/slices/projectSlice';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -27,7 +28,6 @@ const App: React.FC = () => {
   const translation = useAppSelector((state) => state.translation);
   const user = useAppSelector((state) => state.user.user);
   const token = readToken();
-
   usePWA();
 
   usePusher();
@@ -46,6 +46,10 @@ const App: React.FC = () => {
     dispatch(getTranslationList());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(getProjectList());
+  }, [dispatch]);
+ 
   useEffect(() => {
     if (language) {
       dispatch(getTranslationWithQuery({ isoCode: language }));

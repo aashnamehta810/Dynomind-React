@@ -10,14 +10,4 @@ export const PermissionComponents = {
   SETTING: 'settings',
   TRANSLATION: 'translations',
   CREATEUSER: 'creatusers',
-  SWITCHUSER: 'switchusers',
-  COMPANIES: 'companies',
 };
-
-export const RoutesMapping = {
-  creatusers : 'create-user',
-  users : 'list-users',
-  translations : 'translations',
-  notifications : 'notifications',
-  settings : 'security-settings',
-}

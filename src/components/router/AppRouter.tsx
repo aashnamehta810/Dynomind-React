@@ -26,6 +26,7 @@ const SecuritySettingsPage = React.lazy(() => import('@app/pages/SecuritySetting
 const NotificationsPage = React.lazy(() => import('@app/pages/NotificationsPage'));
 const CreateUserFormPage = React.lazy(() => import('@app/pages/CreateUserFormPage'));
 const AccessDeniedPage = React.lazy(() => import('@app/pages/AccessDeniedPage'));
+const KanbanPage = React.lazy(() => import('@app/pages/KanbanPage'));
 const Logout = React.lazy(() => import('./Logout'));
 
 export const DASHBOARD_PATH = '/';
@@ -37,6 +38,7 @@ const ServerError = withLoading(ServerErrorPage);
 const Error404 = withLoading(Error404Page);
 const AccessDenied = withLoading(AccessDeniedPage);
 const ListUsers = withLoading(ListUsersPage);
+const Kanban = withLoading(KanbanPage);
 
 // Profile
 const PersonalInfo = withLoading(PersonalInfoPage);
@@ -57,6 +59,7 @@ const Router = () => {
       ),
       children: [
         { path: DASHBOARD_PATH, element: <Dashboard /> },
+        { path: 'kanban', element: <Kanban /> },
         {
           path: 'create-user',
           element: <CreateUserForm />,

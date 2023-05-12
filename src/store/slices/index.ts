@@ -6,6 +6,7 @@ import pwaReducer from '@app/store/slices/pwaSlice';
 import companyReducer from '@app/store/slices/companySlice';
 import translationReducer from '@app/store/slices/translationsSlice';
 import roleReducer from '@app/store/slices/roleSlice';
+import projectReducer from '@app/store/slices/projectSlice';
 
 export default {
   user: userReducer,
@@ -16,4 +17,5 @@ export default {
   company: companyReducer,
   translation: translationReducer,
   role: roleReducer,
+  project: projectReducer,
 };
