@@ -8,6 +8,8 @@ import { usePermission } from '@app/hooks/usePermission';
 import ProjectMenuOption from '../ProjectMenuOption/ProjectMenuOption';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { ProjectOutlined } from '@ant-design/icons';
+import { ProjectListResponse } from '@app/store/slices/projectSlice';
+import { getAccessCode } from '@app/utils/utils';
 
 interface SiderContentProps {
   setCollapsed: (isCollapsed: boolean) => void;
@@ -20,6 +22,7 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
   const sidebarNavigates = sidebarNavigation.filter((item) => {
     return createUserPermission !== PermissionTypes.NOTHING ? item : !item.isOnlyAdmin;
   });
+  
   const sidebarNavFlat = sidebarNavigates.reduce(
     (result: SidebarNavigationItem[], current) =>
       result.concat(current.children && current.children.length > 0 ? current.children : current),
@@ -31,18 +34,37 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
 
   const openedSubmenu = sidebarNavigates.find(({ children }) => children?.some(({ url }) => url === location.pathname));
   const defaultOpenKeys = openedSubmenu ? [openedSubmenu.key] : [];
+  const userPermission = useAppSelector((state)=>state?.user?.user?.role?.permissions);
   const projectList = useAppSelector((state)=>state.project.projectList);
   const memoizedProjectList = useMemo(() => projectList, [projectList]);
   const [sideNavigation, setSideNavigation] = useState(sidebarNavigation);
 
+
   useEffect(() => {
+
+    if( userPermission ) {
+      const userRolePermission = getAccessCode(userPermission , PermissionComponents.CREATEUSER);
+      if(userRolePermission !== PermissionTypes.READWRITE) {
+        const permissionNavigation = sidebarNavigation.map(item => {
+          if (!item.children) {
+            return item;
+          }
+          return {
+            ...item,
+            children: item.children.filter(child => child.title !== 'common.createUser')
+          }
+        }).filter(item => item);
+        setSideNavigation(permissionNavigation);
+      }
+    }
+
     if (memoizedProjectList) {
-      let newProject = memoizedProjectList.results.map((element: SidebarNavigationItem) => {
+      let newProject = memoizedProjectList.results.map((element: ProjectListResponse) => {
         return {
           title: element.title,
           key: element.title.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase(),
           icon: <ProjectOutlined/>,
-          url: '/kanban',
+          url: `/project/${element.id}`,
           isOnlyAdmin: true,
         }
       });
@@ -71,7 +93,7 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
         return updatedSidebarNavigation;
       });
     }
-  }, [memoizedProjectList]);
+  }, [memoizedProjectList, userPermission]);
 
   return (
     <>

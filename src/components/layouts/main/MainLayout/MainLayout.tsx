@@ -27,7 +27,7 @@ const MainLayout: React.FC = () => {
       if (userPermission) {
         const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
         if(!(checkPermission === PermissionTypes.READ || checkPermission === PermissionTypes.READWRITE || location.pathname === DASHBOARD_PATH )) {
-          //navigate('/accessDenied');
+         // navigate('/accessDenied');
         }
       }
     })();
