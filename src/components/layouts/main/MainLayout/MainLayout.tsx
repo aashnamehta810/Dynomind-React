@@ -21,13 +21,24 @@ const MainLayout: React.FC = () => {
   const userRoutes = useAppSelector((state) => state.user.user?.role.routes);
   const userPermission = useAppSelector((state) => state.user.user?.role.permissions);
   const navigate = useNavigate();
+
   useEffect(() => {
     (async () => {
       setIsTwoColumnsLayout([DASHBOARD_PATH].includes(location.pathname) && isDesktop);
       if (userPermission) {
-        const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
-        if(!(checkPermission === PermissionTypes.READ || checkPermission === PermissionTypes.READWRITE || location.pathname === DASHBOARD_PATH )) {
-         // navigate('/accessDenied');
+        const checkPermission = getRoutePermissionAccessCode(
+          userPermission,
+          RoutesMapping,
+          location.pathname.split('/')[1],
+        );
+        if (
+          !(
+            checkPermission === PermissionTypes.READ ||
+            checkPermission === PermissionTypes.READWRITE ||
+            location.pathname === DASHBOARD_PATH
+          )
+        ) {
+          navigate('/accessDenied');
         }
       }
     })();
@@ -44,7 +55,6 @@ const MainLayout: React.FC = () => {
           <div>
             <Outlet />
           </div>
-          {/* {!isTwoColumnsLayout && <References />} */}
         </MainContent>
       </S.LayoutMain>
     </S.LayoutMaster>

@@ -70,11 +70,7 @@ export interface LoginTypeProps {
 }
 
 export interface PermissionData {
-  [propKey: string]: number;
-}
-
-export interface RoutePermissionData {
-  [propKey: string]: string;
+  [propKey: string]: number | string;
 }
 
 export interface ANY_OBJECT {

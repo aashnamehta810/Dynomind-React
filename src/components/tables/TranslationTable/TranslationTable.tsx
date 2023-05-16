@@ -9,7 +9,13 @@ import { EditableCell } from '../editableTable/EditableCell';
 import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
 import { flatMap, get, isObject, lowerCase, set } from 'lodash';
 import { ANY_OBJECT } from '@app/interfaces/interfaces';
-import { capitalize, checkHTTPStatus, getDefaultTranslationRow, getRoutePermissionAccessCode, sortAscendingDecending } from '@app/utils/utils';
+import {
+  capitalize,
+  checkHTTPStatus,
+  getDefaultTranslationRow,
+  getRoutePermissionAccessCode,
+  sortAscendingDecending,
+} from '@app/utils/utils';
 import { Translation } from '@app/api/translation.api';
 import {
   TranslationState,
@@ -179,20 +185,6 @@ export const TranslationTable: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    if (userPermission) {
-      const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
-      setPermission(checkPermission);
-    }
-  },[location.pathname, userPermission])
-
-  if(permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex(column => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove,1);
-    }
-  }
-
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -291,6 +283,24 @@ export const TranslationTable: React.FC = () => {
       }));
     }
   }, [query, tableData.data]);
+
+  useEffect(() => {
+    if (userPermission) {
+      const checkPermission = getRoutePermissionAccessCode(
+        userPermission,
+        RoutesMapping,
+        location.pathname.split('/')[1],
+      );
+      setPermission(checkPermission);
+    }
+  }, [location.pathname, userPermission]);
+
+  if (permission === PermissionTypes.READ) {
+    const tableActionToRemove = columns.findIndex((column) => column.title === t('tables.actions'));
+    if (tableActionToRemove >= 0) {
+      columns.splice(tableActionToRemove, 1);
+    }
+  }
 
   return (
     <Form form={form} component={false}>

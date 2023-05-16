@@ -1,4 +1,4 @@
-import { LAYOUT } from '@app/styles/themes/constants';
+import { FONT_SIZE, FONT_WEIGHT, LAYOUT } from '@app/styles/themes/constants';
 import { media } from '@app/styles/themes/constants';
 import Board from 'react-trello';
 import styled from 'styled-components';
@@ -14,4 +14,13 @@ export const Kanban = styled(Board)`
     padding: 0 ${LAYOUT.desktop.paddingHorizontal};
     margin: 0 -${LAYOUT.desktop.paddingHorizontal};
   }
+`;
+
+export const ProjectTitle = styled.div`
+  font-size: ${FONT_SIZE.xl};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: ${FONT_WEIGHT.bold};
+  color: var(--primary-color);
+  margin-bottom: 1.875rem;
 `;

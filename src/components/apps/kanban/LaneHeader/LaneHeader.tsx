@@ -3,7 +3,7 @@ import InlineInput from 'react-trello/dist/widgets/InlineInput';
 import * as S from './LaneHeader.styles';
 import { CardState } from '../interfaces';
 
-interface LaneHeaderProps {
+export interface LaneHeaderProps {
   updateTitle: () => void;
   editLaneTitle: boolean;
   style: CSSStyleSheet;

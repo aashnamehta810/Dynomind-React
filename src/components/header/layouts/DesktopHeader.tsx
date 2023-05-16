@@ -10,8 +10,8 @@ import * as S from '../Header.styles';
 import { PermissionTypes } from '@app/constants/enums/permission';
 interface DesktopHeaderProps {
   isTwoColumnsLayout: boolean;
-  notificationPermission: number;
-  createUserPermission: number;
+  notificationPermission: number | undefined;
+  createUserPermission: number | undefined;
 }
 
 export const DesktopHeader: React.FC<DesktopHeaderProps> = ({

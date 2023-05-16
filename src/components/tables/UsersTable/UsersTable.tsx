@@ -161,20 +161,6 @@ export const UsersTable: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    if (userPermission) {
-      const checkPermission = getRoutePermissionAccessCode(userPermission, RoutesMapping, location.pathname.split('/')[1]);  
-      setPermission(checkPermission);
-    }
-  },[location.pathname, userPermission])
-
-  if(permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex(column => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove,1);
-    }
-  }
-
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -295,6 +281,24 @@ export const UsersTable: React.FC = () => {
   useEffect(() => {
     getRoles();
   }, [getRoles]);
+
+  useEffect(() => {
+    if (userPermission) {
+      const checkPermission = getRoutePermissionAccessCode(
+        userPermission,
+        RoutesMapping,
+        location.pathname.split('/')[1],
+      );
+      setPermission(checkPermission);
+    }
+  }, [location.pathname, userPermission]);
+
+  if (permission === PermissionTypes.READ) {
+    const tableActionToRemove = columns.findIndex((column) => column.title === t('tables.actions'));
+    if (tableActionToRemove >= 0) {
+      columns.splice(tableActionToRemove, 1);
+    }
+  }
 
   return (
     <Form form={form} component={false}>

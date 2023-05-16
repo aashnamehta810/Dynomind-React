@@ -21,10 +21,6 @@ export const PhoneItem = styled(BaseForm.Item)`
   .ant-input-group-addon > div > span.ant-select-arrow {
     right: 6px;
   }
-
-  .ant-select-rtl > .ant-select-selector > .ant-select-selection-item {
-    right: 30px;
-  }
 `;
 
 export const Steps = styled(AntdSteps)`

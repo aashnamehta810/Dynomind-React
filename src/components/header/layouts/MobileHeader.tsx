@@ -10,8 +10,8 @@ import { PermissionTypes } from '@app/constants/enums/permission';
 interface MobileHeaderProps {
   toggleSider: () => void;
   isSiderOpened: boolean;
-  notificationPermission: number;
-  createUserPermission: number;
+  notificationPermission: number | undefined;
+  createUserPermission: number | undefined;
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = ({

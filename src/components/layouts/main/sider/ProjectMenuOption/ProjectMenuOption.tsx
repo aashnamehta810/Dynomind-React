@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDialog } from '@app/hooks/useDialog';
 import { AddProjectModal } from '@app/components/common/Modal/AddProject/AddProjectModal';
@@ -7,7 +7,7 @@ import { useLoader } from '@app/hooks/useLoader';
 import { lowerCase } from 'lodash';
 import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
 import { notificationController } from '@app/controllers/notificationController';
-import { checkHTTPStatus } from '@app/utils/utils';
+import { capitalize, checkHTTPStatus } from '@app/utils/utils';
 import { useNavigate } from 'react-router-dom';
 import { doCreateProject, getProjectList } from '@app/store/slices/projectSlice';
 import { Project } from '@app/api/project.api';
@@ -35,9 +35,9 @@ const ProjectMenuOption: React.FC<ProjectContentProps> = ({ optionTitle }) => {
     dispatch(doCreateProject(data))
       .unwrap()
       .then(() => {
+        dispatch(getProjectList());
         handleLoaderClose();
         handleDialogClose();
-        dispatch(getProjectList());
         notificationController.success({
           message: t('project.projectSuccessMessage'),
           description: t('project.projectSuccessDescription'),
@@ -54,7 +54,7 @@ const ProjectMenuOption: React.FC<ProjectContentProps> = ({ optionTitle }) => {
     <S.ContentWrapper>
       <AddProjectModal loading={loader} isOpen={dialogOpen} onOpenChange={handleDialogClose} onFinish={onFinish} />
       <S.Btn type={'ghost'} className="create-project" onClick={handleDialogOpen}>
-        <ReconciliationOutlined /> {`${optionTitle}`}
+        <ReconciliationOutlined /> {`${capitalize(optionTitle)}`}
       </S.Btn>
     </S.ContentWrapper>
   );

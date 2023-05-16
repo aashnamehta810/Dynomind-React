@@ -1,29 +1,32 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import * as S from './SiderMenu.styles';
 import { sidebarNavigation, SidebarNavigationItem } from '../sidebarNavigation';
 import { PermissionComponents, PermissionTypes } from '@app/constants/enums/permission';
-import { usePermission } from '@app/hooks/usePermission';
+// import { usePermission } from '@app/hooks/usePermission';
 import ProjectMenuOption from '../ProjectMenuOption/ProjectMenuOption';
-import { useAppSelector } from '@app/hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
 import { ProjectOutlined } from '@ant-design/icons';
-import { ProjectListResponse } from '@app/store/slices/projectSlice';
-import { getAccessCode } from '@app/utils/utils';
+import { getProjectList } from '@app/store/slices/projectSlice';
+import { capitalize, getAccessCode } from '@app/utils/utils';
+import { Project } from '@app/api/project.api';
 
 interface SiderContentProps {
   setCollapsed: (isCollapsed: boolean) => void;
 }
 
 const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
-  const createUserPermission = usePermission(PermissionComponents.CREATEUSER);
+  // const createUserPermission = usePermission(PermissionComponents.CREATEUSER);
   const { t } = useTranslation();
   const location = useLocation();
-  const sidebarNavigates = sidebarNavigation.filter((item) => {
-    return createUserPermission !== PermissionTypes.NOTHING ? item : !item.isOnlyAdmin;
-  });
-  
-  const sidebarNavFlat = sidebarNavigates.reduce(
+  const dispatch = useAppDispatch();
+
+  // const sidebarNavigates = sidebarNavigation.filter((item) => {
+  //   return createUserPermission !== PermissionTypes.NOTHING ? item : !item.isOnlyAdmin;
+  // });
+
+  const sidebarNavFlat = sidebarNavigation.reduce(
     (result: SidebarNavigationItem[], current) =>
       result.concat(current.children && current.children.length > 0 ? current.children : current),
     [],
@@ -32,53 +35,38 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
   const currentMenuItem = sidebarNavFlat.find(({ url }) => url === location.pathname);
   const defaultSelectedKeys = currentMenuItem ? [currentMenuItem.key] : [];
 
-  const openedSubmenu = sidebarNavigates.find(({ children }) => children?.some(({ url }) => url === location.pathname));
+  const openedSubmenu = sidebarNavigation.find(({ children }) =>
+    children?.some(({ url }) => url === location.pathname),
+  );
   const defaultOpenKeys = openedSubmenu ? [openedSubmenu.key] : [];
-  const userPermission = useAppSelector((state)=>state?.user?.user?.role?.permissions);
-  const projectList = useAppSelector((state)=>state.project.projectList);
+  const projectList = useAppSelector((state) => state?.project.projectList);
   const memoizedProjectList = useMemo(() => projectList, [projectList]);
   const [sideNavigation, setSideNavigation] = useState(sidebarNavigation);
-
+  const userPermission = useAppSelector((state) => state?.user?.user?.role?.permissions);
 
   useEffect(() => {
-
-    if( userPermission ) {
-      const userRolePermission = getAccessCode(userPermission , PermissionComponents.CREATEUSER);
-      if(userRolePermission !== PermissionTypes.READWRITE) {
-        const permissionNavigation = sidebarNavigation.map(item => {
-          if (!item.children) {
-            return item;
-          }
-          return {
-            ...item,
-            children: item.children.filter(child => child.title !== 'common.createUser')
-          }
-        }).filter(item => item);
-        setSideNavigation(permissionNavigation);
-      }
-    }
-
     if (memoizedProjectList) {
-      let newProject = memoizedProjectList.results.map((element: ProjectListResponse) => {
+      const newProject = memoizedProjectList.map((element: Project) => {
         return {
           title: element.title,
-          key: element.title.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase(),
-          icon: <ProjectOutlined/>,
-          url: `/project/${element.id}`,
+          key: 'projects',
+          icon: <ProjectOutlined />,
+          url: `${'/kanban'}/${element.id}`,
           isOnlyAdmin: true,
-        }
+        };
       });
 
-      setSideNavigation(prevState => {
-        const projectListToAdd = prevState.findIndex(column => column.title === 'common.projects');
+      setSideNavigation((prevState) => {
+        const projectListToAdd = prevState.findIndex((column) => column.title === 'common.projects');
         const updatedProjectList: SidebarNavigationItem = {
           ...prevState[projectListToAdd],
-          children: [{
-            title: 'common.createProject',
-            key: 'create-project',
-            isOnlyAdmin: true,
-            isModel: true,
-          }],
+          children: [
+            {
+              title: 'common.createProject',
+              key: 'projects',
+              isModel: true,
+            },
+          ],
         };
         const updatedSidebarNavigation = prevState.map((item, index) => {
           if (index === projectListToAdd) {
@@ -88,12 +76,36 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
           }
         });
         const existingChildren = updatedProjectList.children || [];
-        const updatedChildren = [...existingChildren, ...newProject];
+        const updatedChildren = [...newProject, ...existingChildren];
         updatedProjectList.children = updatedChildren;
         return updatedSidebarNavigation;
       });
     }
-  }, [memoizedProjectList, userPermission]);
+  }, [memoizedProjectList]);
+
+  useEffect(() => {
+    dispatch(getProjectList());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (userPermission) {
+      const userRolePermission = getAccessCode(userPermission, PermissionComponents.CREATEUSER);
+      if (userRolePermission !== PermissionTypes.READWRITE) {
+        const permissionNavigation = sidebarNavigation
+          .map((item) => {
+            if (!item.children) {
+              return item;
+            }
+            return {
+              ...item,
+              children: item.children.filter((child) => child.title !== 'common.createUser'),
+            };
+          })
+          .filter((item) => item);
+        setSideNavigation(permissionNavigation);
+      }
+    }
+  }, [userPermission]);
 
   return (
     <>
@@ -108,7 +120,7 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
           return {
             key: nav.key,
             title: t(nav.title),
-            label: isSubMenu ? t(nav.title) : <Link to={nav.url || ''}>{t(nav.title)}</Link>,
+            label: isSubMenu ? capitalize(t(nav.title)) : <Link to={nav.url || ''}>{capitalize(t(nav.title))}</Link>,
             icon: nav.icon,
             children:
               isSubMenu &&
@@ -116,7 +128,7 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
               nav.children.map((childNav) => ({
                 key: childNav.key,
                 label: !childNav.isModel ? (
-                  <Link to={childNav.url || ''}>{t(childNav.title)}</Link>
+                  <Link to={childNav.url || ''}>{capitalize(t(childNav.title))}</Link>
                 ) : (
                   <ProjectMenuOption optionTitle={`${t(childNav.title)}`} />
                 ),

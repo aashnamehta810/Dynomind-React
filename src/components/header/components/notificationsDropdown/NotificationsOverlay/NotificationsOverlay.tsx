@@ -8,8 +8,8 @@ import { capitalize } from 'utils/utils';
 import { Mention, Notification as NotificationType } from 'api/notifications.api';
 import { notificationsSeverities } from 'constants/notificationsSeverities';
 import * as S from './NotificationsOverlay.styles';
-import { PermissionComponents, PermissionTypes } from '@app/constants/enums/permission';
-import { usePermission } from '@app/hooks/usePermission';
+import { PermissionTypes } from '@app/constants/enums/permission';
+import { useAppSelector } from '@app/hooks/reduxHooks';
 
 interface NotificationsOverlayProps {
   notifications: NotificationType[];
@@ -22,7 +22,7 @@ export const NotificationsOverlay: React.FC<NotificationsOverlayProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const userPermission = usePermission(PermissionComponents.NOTIFICATION);
+  const userPermissions = useAppSelector((state) => state.user.user?.role.permissions) || 0;
 
   const noticesList = useMemo(
     () =>
@@ -66,7 +66,7 @@ export const NotificationsOverlay: React.FC<NotificationsOverlayProps> = ({
         </Col>
         <Col span={24}>
           <Row gutter={[10, 10]}>
-            {notifications.length > 0 && userPermission !== PermissionTypes.READ && (
+            {notifications.length > 0 && userPermissions !== PermissionTypes.READ && (
               <Col span={24}>
                 <S.Btn type="ghost" onClick={() => setNotifications([])}>
                   {t('header.notifications.readAll')}
