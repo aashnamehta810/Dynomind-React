@@ -12,19 +12,11 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ toggleSider, isSiderOpened, isTwoColumnsLayout }) => {
   const { isTablet } = useResponsive();
-  const userPermissions = useAppSelector((state) => state.user.user?.role.permissions);
+  const userPermissions = useAppSelector((state) => state.user.user?.role?.permissions);
+
   return isTablet ? (
-    <DesktopHeader
-      isTwoColumnsLayout={isTwoColumnsLayout}
-      notificationPermission={userPermissions?.notifications}
-      createUserPermission={userPermissions?.users}
-    />
+    <DesktopHeader isTwoColumnsLayout={isTwoColumnsLayout} permissions={userPermissions} />
   ) : (
-    <MobileHeader
-      toggleSider={toggleSider}
-      isSiderOpened={isSiderOpened}
-      notificationPermission={userPermissions?.notifications}
-      createUserPermission={userPermissions?.users}
-    />
+    <MobileHeader toggleSider={toggleSider} isSiderOpened={isSiderOpened} permissions={userPermissions} />
   );
 };

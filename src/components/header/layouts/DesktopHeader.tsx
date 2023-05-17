@@ -8,17 +8,14 @@ import { HeaderFullscreen } from '../components/HeaderFullscreen/HeaderFullscree
 import { UsersDropdown } from '../components/usersDropdown/UsersDropdown';
 import * as S from '../Header.styles';
 import { PermissionTypes } from '@app/constants/enums/permission';
+import { PermissionData } from '@app/interfaces/interfaces';
+
 interface DesktopHeaderProps {
   isTwoColumnsLayout: boolean;
-  notificationPermission: number | undefined;
-  createUserPermission: number | undefined;
+  permissions: PermissionData | undefined;
 }
 
-export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
-  isTwoColumnsLayout,
-  notificationPermission,
-  createUserPermission,
-}) => {
+export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ isTwoColumnsLayout, permissions }) => {
   const leftSide = isTwoColumnsLayout ? (
     <S.SearchColumn xl={16} xxl={17}>
       <Row justify="space-between">
@@ -43,7 +40,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
         <Row align="middle" justify="end" gutter={[10, 10]}>
           <Col>
             <Row gutter={[{ xxl: 10 }, { xxl: 10 }]}>
-              {createUserPermission !== PermissionTypes.NOTHING && (
+              {permissions?.users !== PermissionTypes.NOTHING && (
                 <Col>
                   <UsersDropdown />
                 </Col>
@@ -51,7 +48,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
               <Col>
                 <HeaderFullscreen />
               </Col>
-              {notificationPermission !== PermissionTypes.NOTHING && (
+              {permissions?.notifications !== PermissionTypes.NOTHING && (
                 <Col>
                   <NotificationsDropdown />
                 </Col>

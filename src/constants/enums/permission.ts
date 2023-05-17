@@ -18,4 +18,8 @@ export const RoutesMapping = {
   translations: 'translations',
   notifications: 'notifications',
   settings: 'security-settings',
+  projects: 'projects',
+  roles: 'roles',
+  createproject: 'project-create',
+  projectlist: 'project-list',
 };

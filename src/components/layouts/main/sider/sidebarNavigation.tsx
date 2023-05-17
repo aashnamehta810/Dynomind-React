@@ -10,6 +10,7 @@ import {
 export interface SidebarNavigationItem {
   title: string;
   key: string;
+  routeKey: string;
   url?: string;
   children?: SidebarNavigationItem[];
   icon?: React.ReactNode;
@@ -20,6 +21,7 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
   {
     title: 'common.dashboard',
     key: 'dashboard',
+    routeKey: 'dashboard',
     // TODO use path variable
     url: '/',
     icon: <DashboardOutlined />,
@@ -27,29 +29,34 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
   {
     title: 'common.apps',
     key: 'apps',
+    routeKey: 'apps',
     icon: <PlusSquareOutlined />,
     children: [
       {
         title: 'common.createUser',
         key: 'create-user',
+        routeKey: 'creatusers',
         url: '/create-user',
         icon: <UserOutlined />,
       },
       {
         title: 'common.users',
         key: 'users',
+        routeKey: 'users',
         url: '/list-users',
         icon: <UsergroupAddOutlined />,
       },
       {
         title: 'common.translations',
         key: 'translations',
+        routeKey: 'translations',
         url: '/translations',
         icon: <GlobalOutlined />,
       },
       {
         title: 'common.roles',
         key: 'roles',
+        routeKey: 'roles',
         url: '/roles',
         icon: <UserSwitchOutlined />,
       },
@@ -58,11 +65,13 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
   {
     title: 'common.projects',
     key: 'projects',
+    routeKey: 'projects',
     icon: <PlusSquareOutlined />,
     children: [
       {
         title: 'common.createProject',
         key: 'create-project',
+        routeKey: 'createproject',
         isModel: true,
       },
     ],

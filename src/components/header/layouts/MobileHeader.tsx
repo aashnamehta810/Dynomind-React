@@ -7,19 +7,15 @@ import { SettingsDropdown } from '../components/settingsDropdown/SettingsDropdow
 import { UsersDropdown } from '../components/usersDropdown/UsersDropdown';
 import * as S from '../Header.styles';
 import { PermissionTypes } from '@app/constants/enums/permission';
+import { PermissionData } from '@app/interfaces/interfaces';
+
 interface MobileHeaderProps {
   toggleSider: () => void;
   isSiderOpened: boolean;
-  notificationPermission: number | undefined;
-  createUserPermission: number | undefined;
+  permissions: PermissionData | undefined;
 }
 
-export const MobileHeader: React.FC<MobileHeaderProps> = ({
-  toggleSider,
-  isSiderOpened,
-  notificationPermission,
-  createUserPermission,
-}) => {
+export const MobileHeader: React.FC<MobileHeaderProps> = ({ toggleSider, isSiderOpened, permissions }) => {
   return (
     <Row justify="space-between" align="middle">
       <Col>
@@ -28,12 +24,12 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
 
       <Col>
         <Row align="middle">
-          {createUserPermission !== PermissionTypes.NOTHING && (
+          {permissions?.users !== PermissionTypes.NOTHING && (
             <Col>
               <UsersDropdown />
             </Col>
           )}
-          {notificationPermission !== PermissionTypes.NOTHING && (
+          {permissions?.notifications !== PermissionTypes.NOTHING && (
             <Col>
               <NotificationsDropdown />
             </Col>

@@ -18,7 +18,6 @@ const MainLayout: React.FC = () => {
   const translation = useAppSelector((state) => state.translation);
   const location = useLocation();
   const toggleSider = () => setSiderCollapsed(!siderCollapsed);
-  const userRoutes = useAppSelector((state) => state.user.user?.role.routes);
   const userPermission = useAppSelector((state) => state.user.user?.role.permissions);
   const navigate = useNavigate();
 
@@ -42,7 +41,7 @@ const MainLayout: React.FC = () => {
         }
       }
     })();
-  }, [location.pathname, isDesktop, userRoutes, navigate]);
+  }, [location.pathname, isDesktop, navigate, userPermission]);
 
   return (
     <S.LayoutMaster className={contentDirection(translation.isRtl)}>

@@ -59,7 +59,7 @@ const Router = () => {
       ),
       children: [
         { path: DASHBOARD_PATH, element: <Dashboard /> },
-        { path: 'kanban/:projectId', element: <Kanban /> },
+        { path: 'projects/:projectId', element: <Kanban /> },
         {
           path: 'create-user',
           element: <CreateUserForm />,
