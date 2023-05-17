@@ -193,6 +193,10 @@ export default createGlobalStyle`
   .ant-menu-inline, .ant-menu-vertical {
     border-right: 0;
   }
+  .ant-menu-submenu-popup > .ant-menu-vertical .ant-menu-title-content .ant-btn span {
+    color: var(--text-main-color);
+  }
+
   // notifications end
 
   .rtl {

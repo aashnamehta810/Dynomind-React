@@ -161,22 +161,33 @@ export const UsersTable: React.FC = () => {
     },
   ];
 
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
+  const mergedColumns = () => {
+    if (permission === PermissionTypes.READ) {
+      const tableActionToRemove = columns.findIndex((column) => column.title === t('tables.actions'));
+      if (tableActionToRemove >= 0) {
+        columns.splice(tableActionToRemove, 1);
+      }
     }
-    return {
-      ...col,
-      onCell: (record: UserTableRow) => ({
-        record,
-        inputType: col.inputType,
-        dataIndex: col.dataIndex,
-        title: capitalize(col.title),
-        editing: isEditing(record),
-        roleList: roleList,
-      }),
-    };
-  });
+
+    const mergedCol = columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+      return {
+        ...col,
+        onCell: (record: UserTableRow) => ({
+          record,
+          inputType: col.inputType,
+          dataIndex: col.dataIndex,
+          title: capitalize(col.title),
+          editing: isEditing(record),
+          roleList: roleList,
+        }),
+      };
+    });
+
+    return mergedCol;
+  };
 
   const fetch = useCallback(
     (pagination: QueryTable) => {
@@ -293,13 +304,6 @@ export const UsersTable: React.FC = () => {
     }
   }, [location.pathname, userPermission]);
 
-  if (permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex((column) => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove, 1);
-    }
-  }
-
   return (
     <Form form={form} component={false}>
       <S.TableActionWrapper>
@@ -324,7 +328,7 @@ export const UsersTable: React.FC = () => {
         }}
         bordered
         dataSource={query ? filteredTableData.data : tableData.data}
-        columns={mergedColumns}
+        columns={mergedColumns()}
         rowClassName="editable-row"
         pagination={{
           ...(query ? filteredTableData.pagination : tableData.pagination),

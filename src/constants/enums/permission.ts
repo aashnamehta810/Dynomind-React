@@ -21,5 +21,4 @@ export const RoutesMapping = {
   projects: 'projects',
   roles: 'roles',
   createproject: 'project-create',
-  projectlist: 'project-list',
 };

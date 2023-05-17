@@ -185,21 +185,32 @@ export const TranslationTable: React.FC = () => {
     },
   ];
 
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
+  const mergedColumns = () => {
+    if (permission === PermissionTypes.READ) {
+      const tableActionToRemove = columns.findIndex((column) => column.dataIndex === 'actions');
+      if (tableActionToRemove >= 0) {
+        columns.splice(tableActionToRemove, 1);
+      }
     }
-    return {
-      ...col,
-      onCell: (record: BasicTableRow) => ({
-        record,
-        inputType: 'text',
-        dataIndex: col.dataIndex,
-        title: capitalize(col.title),
-        editing: isEditing(record),
-      }),
-    };
-  });
+
+    const mergedCol = columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+      return {
+        ...col,
+        onCell: (record: BasicTableRow) => ({
+          record,
+          inputType: 'text',
+          dataIndex: col.dataIndex,
+          title: capitalize(col.title),
+          editing: isEditing(record),
+        }),
+      };
+    });
+
+    return mergedCol;
+  };
 
   const getSchema = useCallback(
     (val: ANY_OBJECT, keys = []): ANY_OBJECT =>
@@ -295,13 +306,6 @@ export const TranslationTable: React.FC = () => {
     }
   }, [location.pathname, userPermission]);
 
-  if (permission === PermissionTypes.READ) {
-    const tableActionToRemove = columns.findIndex((column) => column.title === t('tables.actions'));
-    if (tableActionToRemove >= 0) {
-      columns.splice(tableActionToRemove, 1);
-    }
-  }
-
   return (
     <Form form={form} component={false}>
       <S.TableActionWrapper>
@@ -325,7 +329,7 @@ export const TranslationTable: React.FC = () => {
         }}
         bordered
         dataSource={query ? filteredTableData.data : tableData.data}
-        columns={mergedColumns}
+        columns={mergedColumns()}
         rowClassName="editable-row"
         pagination={{
           ...(query ? filteredTableData.pagination : tableData.pagination),

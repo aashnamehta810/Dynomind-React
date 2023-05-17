@@ -6,8 +6,8 @@ import { Button } from 'components/common/buttons/Button/Button';
 import { useTranslation } from 'react-i18next';
 import { doCreateRole, doDeleteRole, getRoleList } from '@app/store/slices/roleSlice';
 import { notificationController } from '@app/controllers/notificationController';
-import { capitalize, checkHTTPStatus } from '@app/utils/utils';
-import { useAppDispatch } from '@app/hooks/reduxHooks';
+import { capitalize, checkHTTPStatus, getRoutePermissionAccessCode } from '@app/utils/utils';
+import { useAppDispatch, useAppSelector } from '@app/hooks/reduxHooks';
 import { useNavigate } from 'react-router-dom';
 import { ANY_OBJECT } from '@app/interfaces/interfaces';
 import { Role } from '@app/api/role.api';
@@ -19,6 +19,7 @@ import { AddRoleModal } from '@app/components/common/Modal/AddRole/AddRoleModal'
 import { useDialog } from '@app/hooks/useDialog';
 import { useLoader } from '@app/hooks/useLoader';
 import { lowerCase } from 'lodash';
+import { PermissionTypes, RoutesMapping } from '@app/constants/enums/permission';
 
 export const RoleTable: React.FC = () => {
   const { t } = useTranslation();
@@ -47,6 +48,8 @@ export const RoleTable: React.FC = () => {
     loading: false,
   });
   const [query, setQuery] = useState('');
+  const [permission, setPermission] = useState(0);
+  const userPermission = useAppSelector((state) => state.user.user?.role.permissions);
 
   const fetch = useCallback(
     (pagination: QueryTable) => {
@@ -144,6 +147,17 @@ export const RoleTable: React.FC = () => {
     },
   ];
 
+  const tableColumns = () => {
+    if (permission === PermissionTypes.READ) {
+      const tableActionToRemove = columns.findIndex((column) => column.dataIndex === 'actions');
+      if (tableActionToRemove >= 0) {
+        columns.splice(tableActionToRemove, 1);
+      }
+    }
+
+    return columns;
+  };
+
   const onFinish = (values: ANY_OBJECT) => {
     handleLoaderOpen();
     const data = {
@@ -185,6 +199,17 @@ export const RoleTable: React.FC = () => {
     fetch(initialPagination);
   }, [fetch, initialPagination]);
 
+  useEffect(() => {
+    if (userPermission) {
+      const checkPermission = getRoutePermissionAccessCode(
+        userPermission,
+        RoutesMapping,
+        location.pathname.split('/')[1],
+      );
+      setPermission(checkPermission);
+    }
+  }, [userPermission]);
+
   return (
     <Form form={form} component={false}>
       <S.TableActionWrapper>
@@ -203,7 +228,7 @@ export const RoleTable: React.FC = () => {
       <Table
         rowKey="id"
         bordered
-        columns={columns}
+        columns={tableColumns()}
         dataSource={query ? filteredTableData.data : tableData.data}
         rowClassName="editable-row"
         pagination={{

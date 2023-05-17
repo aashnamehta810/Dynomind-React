@@ -68,7 +68,7 @@ const SiderMenu: React.FC<SiderContentProps> = ({ setCollapsed }) => {
           return {
             title: element.title,
             key: `projects-${element.id}`,
-            routeKey: 'createproject',
+            routeKey: 'projects',
             icon: <ProjectOutlined />,
             url: `${'/projects'}/${element.id}`,
           };

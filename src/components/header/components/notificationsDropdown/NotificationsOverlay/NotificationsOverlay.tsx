@@ -22,7 +22,7 @@ export const NotificationsOverlay: React.FC<NotificationsOverlayProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const userPermissions = useAppSelector((state) => state.user.user?.role.permissions) || 0;
+  const userPermissions = useAppSelector((state) => state.user.user?.role.permissions.notifications) || 0;
 
   const noticesList = useMemo(
     () =>
