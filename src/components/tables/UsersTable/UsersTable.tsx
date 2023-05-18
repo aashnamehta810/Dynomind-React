@@ -307,10 +307,14 @@ export const UsersTable: React.FC = () => {
   return (
     <Form form={form} component={false}>
       <S.TableActionWrapper>
+        {permission === PermissionTypes.READWRITE &&
+        <>
         <Button block type="primary" className="addUser" onClick={handleDialogOpen}>
           {t('common.addUser')}
         </Button>
         <AddUserModal loading={loader} isOpen={dialogOpen} onOpenChange={handleDialogClose} onFinish={onFinish} />
+        </>
+        }
         <S.InputSearch
           placeholder={t('header.search')}
           className="search-input"

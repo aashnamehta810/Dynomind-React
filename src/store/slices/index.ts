@@ -7,6 +7,7 @@ import companyReducer from '@app/store/slices/companySlice';
 import translationReducer from '@app/store/slices/translationsSlice';
 import roleReducer from '@app/store/slices/roleSlice';
 import projectReducer from '@app/store/slices/projectSlice';
+import processReducer from '@app/store/slices/processSlice';
 
 export default {
   user: userReducer,
@@ -18,4 +19,5 @@ export default {
   translation: translationReducer,
   role: roleReducer,
   project: projectReducer,
+  process: processReducer,
 };

@@ -309,10 +309,14 @@ export const TranslationTable: React.FC = () => {
   return (
     <Form form={form} component={false}>
       <S.TableActionWrapper>
-        <Button block type="primary" className="addLanguage" onClick={handleDialogOpen}>
-          {t('common.addLanguage')}
-        </Button>
-        <AddLanguageModal loading={loader} isOpen={dialogOpen} onOpenChange={handleDialogClose} onFinish={onFinish} />
+        {permission === PermissionTypes.READWRITE &&
+        <>
+          <Button block type="primary" className="addLanguage" onClick={handleDialogOpen}>
+            {t('common.addLanguage')}
+          </Button>
+          <AddLanguageModal loading={loader} isOpen={dialogOpen} onOpenChange={handleDialogClose} onFinish={onFinish} />
+        </>
+        }
         <S.InputSearch
           placeholder={t('header.search')}
           onChange={(event) => setQuery(event.target.value)}

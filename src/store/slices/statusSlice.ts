@@ -23,7 +23,7 @@ async (statusPayload: CreateStatusRequest) => createStatus(statusPayload),
 );
 
 export const statusSlice = createSlice({
-    name: Entity.STATUS,
+    name: 'status',
     initialState,
     reducers: {},
 });

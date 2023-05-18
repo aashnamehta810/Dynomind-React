@@ -6,44 +6,66 @@ import { CardState, Tag, Participant } from '../../interfaces';
 import { TagDropdown } from '../TagDropdown/TagDropdown';
 import * as S from './NewCardForm.styles';
 import { ParticipantsDropdown } from '../ParticipantsDropdown/ParticipantsDropdown';
+import * as Auth from '@app/components/layouts/AuthLayout/AuthLayout.styles';
+import { useAppDispatch } from '@app/hooks/reduxHooks';
+import { useNavigate } from 'react-router-dom';
+import { doCreateProcess } from '@app/store/slices/processSlice';
+import { getTranslationList } from '@app/store/slices/translationsSlice';
+import { notificationController } from '@app/controllers/notificationController';
+import { checkHTTPStatus } from '@app/utils/utils';
 
 const formInputs = [
   {
     title: 'kanban.title',
     name: 'title',
+    required: true,
+    message: 'common.requiredField',
   },
   {
     title: 'kanban.description',
     name: 'description',
+    required: true,
+    message: 'common.requiredField',
   },
 ];
 
-interface NewCardFormProps {
+export interface NewCardFormProps {
+  isLoading: boolean;
   onAdd: (state: CardState) => void;
   onCancel: () => void;
+  onFinish: (values: { title: string; description: string; }, selectedTags: Tag[], selectedParticipants: Participant[]) => void;
 }
 
-export const NewCardForm: React.FC<NewCardFormProps> = ({ onAdd, onCancel }) => {
+export const NewCardForm: React.FC<NewCardFormProps> = ({onAdd, onCancel, onFinish, isLoading}) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<Participant[]>([]);
-  const [isLoading, setLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { t } = useTranslation();
 
-  const onFinish = (values: []) => {
-    setLoading(true);
-    setTimeout(() => {
-      onAdd({ ...values, tags: selectedTags, participants: selectedParticipants });
-      setLoading(false);
-    }, 1000);
+  const handleFinish = (values: { title: string; description: string; }) => {
+    onFinish(values, selectedTags, selectedParticipants);
   };
 
   const formItems = useMemo(
     () =>
       formInputs.map((item, index) => (
+        item.required ? (
+          <Auth.FormItem
+            name={item.name}
+            label={t(item.title)}
+            rules={[{ required: item.required, message: t(item.message) }]}
+          >
+            <Input placeholder={t(item.title)} bordered={false} />
+          </Auth.FormItem>
+        )
+        : (
         <S.FormInput key={index} name={item.name}>
           <Input placeholder={t(item.title)} bordered={false} />
         </S.FormInput>
+        )
       )),
     [t],
   );
@@ -54,7 +76,7 @@ export const NewCardForm: React.FC<NewCardFormProps> = ({ onAdd, onCancel }) => 
         name="addCard"
         isFieldsChanged
         footer={<S.FooterButtons loading={isLoading} size="small" onCancel={onCancel} />}
-        onFinish={onFinish}
+        onFinish={handleFinish}
       >
         {formItems}
         <TagDropdown selectedTags={selectedTags} setSelectedTags={setSelectedTags} />

@@ -8,7 +8,7 @@ import { TagDropdown } from '@app/components/apps/kanban/newCardForm/TagDropdown
 import { CardState, Tag as ITag, Participant as IParticipant } from '@app/components/apps/kanban/interfaces';
 import * as S from './Card.styles';
 
-interface CardProps {
+export interface CardProps {
   style: CSSStyleSheet;
   onClick: () => void;
   onDelete: () => void;
