@@ -27,9 +27,7 @@ export const Kanban: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [cards, setCards] = useState<CardState[]>([]);
   const user = useAppSelector((state) => state.user.user);
-  console.log(typeof(user?.id),"user");
   const getProjectDetails = useCallback(async () => {
     const res = await dispatch(getProjectById(projectId)).unwrap();
     setProjectDetails(res);
@@ -39,14 +37,15 @@ export const Kanban: React.FC = () => {
     getProjectDetails();
   }, [dispatch, getProjectDetails, params.projectId]);
 
-  const onAdd = (state: CardState) => {
-    setCards((prevCards) => [...prevCards, state]);
-    console.log('Card added:', state);
-  };
 
-  const handleFinish = (values: {title:string, description:string}, selectedTags: Tag[], selectedParticipants: Participant[]) => {
+  const handleFinish = (
+    values: { title: string; description: string },
+    selectedTags: Tag[],
+    selectedParticipants: Participant[],
+    onSuccess: () => void
+  ) => {
     setIsLoading(true);
-    const data : CreateProcessRequest = {
+    const data: CreateProcessRequest = {
       title: values.title,
       description: values.description,
       project: projectId,
@@ -58,8 +57,8 @@ export const Kanban: React.FC = () => {
     };
 
     dispatch(doCreateProcess(data))
-      .unwrap()
       .then(() => {
+        onSuccess();
         setIsLoading(false);
         notificationController.success({
           message: t('process.processSuccessMessage'),
@@ -79,7 +78,7 @@ export const Kanban: React.FC = () => {
       <S.Kanban
         components={{
           Card: (props: CardProps) => <Card {...props}/>,
-          NewCardForm: (props: NewCardFormProps) => <NewCardForm {...props} isLoading={isLoading} onAdd={onAdd} onFinish={handleFinish} />,
+          NewCardForm: (props: NewCardFormProps) => <NewCardForm {...props} isLoading={isLoading} onFinish={handleFinish}/>,
           LaneHeader: (props: LaneHeaderProps) => <LaneHeader {...props} />,
           AddCardLink,
           NewLaneSection,

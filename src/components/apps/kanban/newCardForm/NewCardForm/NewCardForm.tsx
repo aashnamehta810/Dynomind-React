@@ -7,12 +7,12 @@ import { TagDropdown } from '../TagDropdown/TagDropdown';
 import * as S from './NewCardForm.styles';
 import { ParticipantsDropdown } from '../ParticipantsDropdown/ParticipantsDropdown';
 import * as Auth from '@app/components/layouts/AuthLayout/AuthLayout.styles';
-import { useAppDispatch } from '@app/hooks/reduxHooks';
-import { useNavigate } from 'react-router-dom';
 import { doCreateProcess } from '@app/store/slices/processSlice';
 import { getTranslationList } from '@app/store/slices/translationsSlice';
 import { notificationController } from '@app/controllers/notificationController';
 import { checkHTTPStatus } from '@app/utils/utils';
+import { FormInput } from '@app/constants/enums/form';
+import TextArea from 'antd/lib/input/TextArea';
 
 const formInputs = [
   {
@@ -20,12 +20,14 @@ const formInputs = [
     name: 'title',
     required: true,
     message: 'common.requiredField',
+    type: FormInput.TEXT
   },
   {
     title: 'kanban.description',
     name: 'description',
     required: true,
     message: 'common.requiredField',
+    type: FormInput.TEXTAREA
   },
 ];
 
@@ -33,37 +35,53 @@ export interface NewCardFormProps {
   isLoading: boolean;
   onAdd: (state: CardState) => void;
   onCancel: () => void;
-  onFinish: (values: { title: string; description: string; }, selectedTags: Tag[], selectedParticipants: Participant[]) => void;
+  onFinish: (
+    values: { title: string; description: string; },
+    selectedTags: Tag[],
+    selectedParticipants: Participant[],
+    onSuccess: () => void
+  ) => void;
 }
 
 export const NewCardForm: React.FC<NewCardFormProps> = ({onAdd, onCancel, onFinish, isLoading}) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<Participant[]>([]);
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
   const { t } = useTranslation();
 
-  const handleFinish = (values: { title: string; description: string; }) => {
-    onFinish(values, selectedTags, selectedParticipants);
+  const handleFinish = (values: { title: string; description: string }) => {
+    onFinish(values, selectedTags, selectedParticipants, () => {
+      setTimeout(() => {
+        onAdd({ ...values, tags: selectedTags, participants: selectedParticipants });
+      }, 1000);
+    });
   };
-
   const formItems = useMemo(
     () =>
       formInputs.map((item, index) => (
         item.required ? (
           <Auth.FormItem
+            key={index}
             name={item.name}
             label={t(item.title)}
             rules={[{ required: item.required, message: t(item.message) }]}
           >
-            <Input placeholder={t(item.title)} bordered={false} />
+            {item.type === FormInput.TEXTAREA ? (
+              <TextArea placeholder={t(item.title)} />
+              ) : (
+              <Input placeholder={t(item.title)} bordered={false} />
+              )
+            }
           </Auth.FormItem>
         )
         : (
         <S.FormInput key={index} name={item.name}>
-          <Input placeholder={t(item.title)} bordered={false} />
+          {item.type === FormInput.TEXTAREA ? (
+              <TextArea placeholder={t(item.title)} />
+              ) : (
+              <Input placeholder={t(item.title)} bordered={false} />
+              )
+            }
         </S.FormInput>
         )
       )),
